@@ -84,6 +84,7 @@ func main() {
 	admin.HandleFunc("/leaves/{id}/reject", adminHandler.RejectLeave).Methods("PUT", "OPTIONS")
 	admin.HandleFunc("/users", adminHandler.GetAllUsers).Methods("GET", "OPTIONS")
 	admin.HandleFunc("/users", adminHandler.CreateUser).Methods("POST", "OPTIONS")
+	admin.HandleFunc("/users/{id}", adminHandler.UpdateUser).Methods("PUT", "OPTIONS")
 	admin.HandleFunc("/dashboard", adminHandler.GetDashboardStats).Methods("GET", "OPTIONS")
 	admin.HandleFunc("/balances", adminHandler.AllocateBalance).Methods("POST", "OPTIONS")
 

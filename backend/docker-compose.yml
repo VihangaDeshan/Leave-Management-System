@@ -5,9 +5,9 @@ services:
     image: postgres:15-alpine
     container_name: leave-management-db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres123
-      POSTGRES_DB: leave_management
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-leave_management}
     ports:
       - "5432:5432"
     volumes:

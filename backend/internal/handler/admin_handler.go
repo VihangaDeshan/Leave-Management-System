@@ -160,6 +160,34 @@ func (h *AdminHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	utils.SuccessResponse(w, "User created successfully", response, http.StatusCreated)
 }
 
+// UpdateUser updates a user
+func (h *AdminHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userID, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		utils.ErrorResponse(w, "Invalid user ID", nil, http.StatusBadRequest)
+		return
+	}
+
+	var req dto.UpdateUserRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		utils.ErrorResponse(w, "Invalid request body", nil, http.StatusBadRequest)
+		return
+	}
+
+	response, err := h.userService.UpdateUser(userID, &req)
+	if err != nil {
+		if appErr, ok := err.(*apperrors.AppError); ok {
+			utils.ErrorResponse(w, appErr.Message, nil, appErr.Code)
+			return
+		}
+		utils.ErrorResponse(w, "Internal server error", nil, http.StatusInternalServerError)
+		return
+	}
+
+	utils.SuccessResponse(w, "User updated successfully", response, http.StatusOK)
+}
+
 // Get Dashboard Stats
 func (h *AdminHandler) GetDashboardStats(w http.ResponseWriter, r *http.Request) {
 	response, err := h.dashboardService.GetDashboardStats()

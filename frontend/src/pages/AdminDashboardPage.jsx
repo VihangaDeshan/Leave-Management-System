@@ -84,6 +84,13 @@ const AdminDashboardPage = () => {
               >
                 Employee View
               </button>
+              <button
+                onClick={() => navigate('/admin/users')}
+                className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+              >
+                <Users className="w-4 h-4 mr-1" />
+                Manage Users
+              </button>
               <span className="text-sm text-gray-700">
                 {user?.first_name} {user?.last_name} ({user?.role})
               </span>

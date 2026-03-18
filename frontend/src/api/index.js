@@ -80,6 +80,11 @@ export const adminApi = {
     return response.data;
   },
 
+  updateUser: async (id, data) => {
+    const response = await api.put(`/admin/users/${id}`, data);
+    return response.data;
+  },
+
   getDashboardStats: async () => {
     const response = await api.get('/admin/dashboard');
     return response.data;
