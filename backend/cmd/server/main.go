@@ -8,13 +8,14 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/gorilla/mux"
 	"leave-management-system/internal/config"
 	"leave-management-system/internal/database"
 	"leave-management-system/internal/handler"
 	"leave-management-system/internal/middleware"
 	"leave-management-system/internal/repository"
 	"leave-management-system/internal/service"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {

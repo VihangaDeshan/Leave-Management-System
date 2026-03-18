@@ -24,22 +24,22 @@ type ReviewLeaveRequest struct {
 
 // LeaveRequestResponse represents a leave request in API responses
 type LeaveRequestResponse struct {
-	ID          int                   `json:"id"`
-	UserID      int                   `json:"user_id"`
-	User        *UserBasicInfo        `json:"user,omitempty"`
-	LeaveTypeID int                   `json:"leave_type_id"`
-	LeaveType   *LeaveTypeResponse    `json:"leave_type,omitempty"`
-	StartDate   string                `json:"start_date"`
-	EndDate     string                `json:"end_date"`
-	TotalDays   float64               `json:"total_days"`
-	Reason      string                `json:"reason"`
-	Status      string                `json:"status"`
-	ReviewedBy  *int                  `json:"reviewed_by"`
-	Reviewer    *UserBasicInfo        `json:"reviewer,omitempty"`
-	ReviewedAt  *string               `json:"reviewed_at"`
-	ReviewNotes *string               `json:"review_notes"`
-	CreatedAt   string                `json:"created_at"`
-	UpdatedAt   string                `json:"updated_at"`
+	ID          int                `json:"id"`
+	UserID      int                `json:"user_id"`
+	User        *UserBasicInfo     `json:"user,omitempty"`
+	LeaveTypeID int                `json:"leave_type_id"`
+	LeaveType   *LeaveTypeResponse `json:"leave_type,omitempty"`
+	StartDate   string             `json:"start_date"`
+	EndDate     string             `json:"end_date"`
+	TotalDays   float64            `json:"total_days"`
+	Reason      string             `json:"reason"`
+	Status      string             `json:"status"`
+	ReviewedBy  *int               `json:"reviewed_by"`
+	Reviewer    *UserBasicInfo     `json:"reviewer,omitempty"`
+	ReviewedAt  *string            `json:"reviewed_at"`
+	ReviewNotes *string            `json:"review_notes"`
+	CreatedAt   string             `json:"created_at"`
+	UpdatedAt   string             `json:"updated_at"`
 }
 
 // LeaveRequestsListResponse represents a paginated list of leave requests

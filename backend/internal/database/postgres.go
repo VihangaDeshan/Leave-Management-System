@@ -6,8 +6,9 @@ import (
 	"log"
 	"time"
 
-	_ "github.com/lib/pq"
 	"leave-management-system/internal/config"
+
+	_ "github.com/lib/pq"
 )
 
 var DB *sql.DB

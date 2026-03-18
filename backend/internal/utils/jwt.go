@@ -4,9 +4,10 @@ import (
 	"errors"
 	"time"
 
-	"github.com/golang-jwt/jwt/v5"
 	"leave-management-system/internal/config"
 	"leave-management-system/internal/models"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 // JWTClaims represents the JWT token claims

@@ -11,10 +11,10 @@ import (
 )
 
 type LeaveService struct {
-	leaveRepo       *repository.LeaveRepository
-	balanceRepo     *repository.BalanceRepository
-	leaveTypeRepo   *repository.LeaveTypeRepository
-	userRepo        *repository.UserRepository
+	leaveRepo     *repository.LeaveRepository
+	balanceRepo   *repository.BalanceRepository
+	leaveTypeRepo *repository.LeaveTypeRepository
+	userRepo      *repository.UserRepository
 }
 
 func NewLeaveService(
@@ -24,10 +24,10 @@ func NewLeaveService(
 	userRepo *repository.UserRepository,
 ) *LeaveService {
 	return &LeaveService{
-		leaveRepo:       leaveRepo,
-		balanceRepo:     balanceRepo,
-		leaveTypeRepo:   leaveTypeRepo,
-		userRepo:        userRepo,
+		leaveRepo:     leaveRepo,
+		balanceRepo:   balanceRepo,
+		leaveTypeRepo: leaveTypeRepo,
+		userRepo:      userRepo,
 	}
 }
 
@@ -301,9 +301,9 @@ func (s *LeaveService) GetUserLeaveBalance(userID int) ([]dto.LeaveBalanceRespon
 		}
 
 		response = append(response, dto.LeaveBalanceResponse{
-			ID:            balance.ID,
-			UserID:        balance.UserID,
-			LeaveTypeID:   balance.LeaveTypeID,
+			ID:          balance.ID,
+			UserID:      balance.UserID,
+			LeaveTypeID: balance.LeaveTypeID,
 			LeaveType: &dto.LeaveTypeResponse{
 				ID:          leaveType.ID,
 				Name:        leaveType.Name,
