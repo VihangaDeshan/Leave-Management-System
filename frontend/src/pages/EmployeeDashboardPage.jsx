@@ -228,7 +228,7 @@ const EmployeeDashboardPage = () => {
                 <select
                   required
                   value={formData.leave_type_id}
-                  onChange={(e) => setFormData({ ...formData, leave_type_id: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, leave_type_id: parseInt(e.target.value, 10) || '' })}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Select leave type</option>
@@ -302,3 +302,4 @@ const EmployeeDashboardPage = () => {
 };
 
 export default EmployeeDashboardPage;
+
