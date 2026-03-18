@@ -19,7 +19,7 @@ func (r *BalanceRepository) Create(balance *models.LeaveBalance) error {
 	query := `
 		INSERT INTO leave_balances (user_id, leave_type_id, total_days, used_days, year)
 		VALUES ($1, $2, $3, $4, $5)
-		RETURNING id, available_days, created_at, updated_at
+		RETURNING id, (total_days - used_days) AS available_days, created_at, updated_at
 	`
 	err := r.db.QueryRow(
 		query,
@@ -37,7 +37,7 @@ func (r *BalanceRepository) Create(balance *models.LeaveBalance) error {
 func (r *BalanceRepository) FindByUserAndType(userID, leaveTypeID, year int) (*models.LeaveBalance, error) {
 	balance := &models.LeaveBalance{}
 	query := `
-		SELECT id, user_id, leave_type_id, total_days, used_days, available_days, year, created_at, updated_at
+		SELECT id, user_id, leave_type_id, total_days, used_days, (total_days - used_days) AS available_days, year, created_at, updated_at
 		FROM leave_balances
 		WHERE user_id = $1 AND leave_type_id = $2 AND year = $3
 	`
@@ -66,7 +66,7 @@ func (r *BalanceRepository) FindByUserAndType(userID, leaveTypeID, year int) (*m
 // FindByUserID finds all leave balances for a user in a given year
 func (r *BalanceRepository) FindByUserID(userID, year int) ([]*models.LeaveBalance, error) {
 	query := `
-		SELECT id, user_id, leave_type_id, total_days, used_days, available_days, year, created_at, updated_at
+		SELECT id, user_id, leave_type_id, total_days, used_days, (total_days - used_days) AS available_days, year, created_at, updated_at
 		FROM leave_balances
 		WHERE user_id = $1 AND year = $2
 		ORDER BY leave_type_id
@@ -106,7 +106,7 @@ func (r *BalanceRepository) Update(balance *models.LeaveBalance) error {
 		UPDATE leave_balances
 		SET total_days = $1, used_days = $2
 		WHERE id = $3
-		RETURNING available_days, updated_at
+		RETURNING (total_days - used_days) AS available_days, updated_at
 	`
 	return r.db.QueryRow(
 		query,
@@ -156,7 +156,7 @@ func (r *BalanceRepository) FindAll(year int, limit, offset int) ([]*models.Leav
 
 	// Get balances
 	query := `
-		SELECT id, user_id, leave_type_id, total_days, used_days, available_days, year, created_at, updated_at
+		SELECT id, user_id, leave_type_id, total_days, used_days, (total_days - used_days) as available_days, year, created_at, updated_at
 		FROM leave_balances
 		WHERE year = $1
 		ORDER BY user_id, leave_type_id
