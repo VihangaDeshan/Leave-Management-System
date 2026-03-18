@@ -1,0 +1,61 @@
+# Root .gitignore for Leave Management System
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# OS files
+desktop.ini
+.AppleDouble
+.LSOverride
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Temporary files
+*.tmp
+*.temp
+.cache
+
+# Documentation builds
+docs/_build/
+site/
+
+# Coverage reports
+coverage/
+*.coverage
+htmlcov/
+.nyc_output
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Don't ignore specific configuration examples
+!.env.example
+!config.example.*

@@ -1,0 +1,97 @@
+# Go Backend .gitignore
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+dist/
+build/
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+coverage.txt
+coverage.html
+*.coverprofile
+
+# Go workspace file
+go.work
+go.work.sum
+
+# Dependency directories
+vendor/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Air live reload
+tmp/
+
+# Debug files
+__debug_bin
+debug
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Log files
+*.log
+logs/
+
+# Compiled binaries
+cmd/server/server
+cmd/server/server.exe
+main
+main.exe
+
+# Docker volumes data
+docker-data/
+postgres-data/
+
+# Migration files (if generated)
+# migrations/*.sql (uncomment if needed)
+
+# Temporary files
+*.tmp
+*.temp
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Linux
+*~
+
+# Go sum backup
+go.sum.backup
+
+# Delve debugger
+__debug_bin*
+
+# Certificate files (add to version control if needed for dev)
+*.pem
+*.key
+*.crt
+
+# Don't ignore example files
+!.env.example
+!config.example.yaml
