@@ -164,27 +164,32 @@ const UserManagementPage = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center text-sm font-semibold text-[var(--ink-soft)]">
+        Loading users...
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen pb-10">
       {/* Header */}
-      <nav className="bg-white shadow-sm">
+      <nav className="glass-panel sticky top-0 z-30 border-b border-[var(--line-soft)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center space-x-4">
+          <div className="flex min-h-16 flex-col justify-center gap-3 py-3 sm:min-h-20 sm:flex-row sm:items-center sm:justify-between sm:py-0">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <button
                 onClick={() => navigate('/admin')}
-                className="flex items-center text-sm text-gray-600 hover:text-gray-900"
+                className="ghost-btn inline-flex items-center rounded-xl px-3 py-2 text-xs font-semibold sm:text-sm"
               >
                 <ArrowLeft className="w-4 h-4 mr-1" />
                 Back to Dashboard
               </button>
-              <h1 className="text-xl font-bold text-gray-900">User Management</h1>
+              <h1 className="section-title text-lg font-bold text-[var(--ink-strong)] sm:text-xl">User Management</h1>
             </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-700">
+
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <span className="rounded-full border border-[var(--line)] bg-white/80 px-3 py-1.5 text-xs font-semibold text-[var(--ink-soft)] sm:text-sm">
                 {user?.first_name} {user?.last_name} ({user?.role})
               </span>
               <button
@@ -192,7 +197,7 @@ const UserManagementPage = () => {
                   logout();
                   navigate('/login');
                 }}
-                className="flex items-center text-sm text-gray-700 hover:text-gray-900"
+                className="ghost-btn inline-flex items-center rounded-xl px-3 py-2 text-xs font-semibold sm:text-sm"
               >
                 <LogOut className="w-4 h-4 mr-1" />
                 Logout
@@ -202,56 +207,56 @@ const UserManagementPage = () => {
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         {/* Users Table */}
-        <div className="bg-white shadow rounded-lg overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+        <div className="surface-panel overflow-hidden rounded-2xl">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--line-soft)] px-5 py-4 sm:px-6">
             <div className="flex items-center">
-              <Users className="w-5 h-5 mr-2 text-gray-600" />
-              <h3 className="text-lg font-semibold text-gray-900">All Users</h3>
+              <Users className="w-5 h-5 mr-2 text-[var(--brand)]" />
+              <h3 className="section-title text-lg font-bold text-[var(--ink-strong)]">All Users</h3>
             </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-500">{users.length} total users</span>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--ink-soft)] sm:text-sm">{users.length} total users</span>
               <button
                 onClick={() => setCreateModal(true)}
-                className="inline-flex items-center bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 text-sm"
+                className="brand-btn inline-flex items-center rounded-xl px-3 py-2 text-xs font-semibold sm:text-sm"
               >
                 <Plus className="w-4 h-4 mr-1" />
                 Add User
               </button>
             </div>
           </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <div className="hidden overflow-x-auto md:block soft-scrollbar">
+            <table className="min-w-full divide-y divide-[var(--line-soft)]">
+              <thead className="bg-[var(--bg-muted)]/55">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.08em] text-[var(--ink-soft)]">
                     Name
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.08em] text-[var(--ink-soft)]">
                     Email
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.08em] text-[var(--ink-soft)]">
                     Role
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.08em] text-[var(--ink-soft)]">
                     Department
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.08em] text-[var(--ink-soft)]">
                     Manager
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.08em] text-[var(--ink-soft)]">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.08em] text-[var(--ink-soft)]">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-[var(--line-soft)] bg-white/90">
                 {users.length === 0 ? (
                   <tr>
-                    <td colSpan="7" className="px-6 py-4 text-center text-gray-500">
+                    <td colSpan="7" className="px-6 py-5 text-center text-sm text-[var(--ink-soft)]">
                       No users found
                     </td>
                   </tr>
@@ -260,19 +265,19 @@ const UserManagementPage = () => {
                     const manager = users.find((m) => m.id === u.manager_id);
                     return (
                       <tr key={u.id}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
+                        <td className="whitespace-nowrap px-6 py-4">
+                          <div className="text-sm font-semibold text-[var(--ink-strong)]">
                             {u.first_name} {u.last_name}
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-6 py-4 text-sm text-[var(--ink-soft)]">
                           {u.email}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="whitespace-nowrap px-6 py-4">
                           <span
-                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            className={`fancy-badge inline-flex leading-5 ${
                               u.role === 'admin'
-                                ? 'bg-purple-100 text-purple-800'
+                                ? 'bg-violet-100 text-violet-800'
                                 : u.role === 'manager'
                                 ? 'bg-blue-100 text-blue-800'
                                 : 'bg-green-100 text-green-800'
@@ -281,15 +286,15 @@ const UserManagementPage = () => {
                             {u.role}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="whitespace-nowrap px-6 py-4 text-sm text-[var(--ink-soft)]">
                           {u.department || '-'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-6 py-4 text-sm text-[var(--ink-soft)]">
                           {manager ? `${manager.first_name} ${manager.last_name}` : '-'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="whitespace-nowrap px-6 py-4">
                           <span
-                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            className={`fancy-badge inline-flex leading-5 ${
                               u.is_active
                                 ? 'bg-green-100 text-green-800'
                                 : 'bg-red-100 text-red-800'
@@ -298,18 +303,18 @@ const UserManagementPage = () => {
                             {u.is_active ? 'Active' : 'Inactive'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <td className="whitespace-nowrap px-6 py-4 text-sm font-medium">
                           <div className="flex items-center space-x-4">
                             <button
                               onClick={() => handleEditClick(u)}
-                              className="text-blue-600 hover:text-blue-900 flex items-center"
+                              className="inline-flex items-center rounded-lg bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-800 hover:bg-blue-200"
                             >
                               <Edit className="w-4 h-4 mr-1" />
                               Edit
                             </button>
                             <button
                               onClick={() => handleDeleteUser(u)}
-                              className="text-red-600 hover:text-red-900 flex items-center"
+                              className="inline-flex items-center rounded-lg bg-rose-100 px-2.5 py-1 text-xs font-semibold text-rose-800 hover:bg-rose-200"
                             >
                               <Trash2 className="w-4 h-4 mr-1" />
                               Delete
@@ -323,67 +328,118 @@ const UserManagementPage = () => {
               </tbody>
             </table>
           </div>
+
+          <div className="space-y-3 p-4 md:hidden">
+            {users.length === 0 ? (
+              <div className="rounded-xl border border-[var(--line-soft)] bg-white/80 p-4 text-center text-sm text-[var(--ink-soft)]">
+                No users found
+              </div>
+            ) : (
+              users.map((u) => {
+                const manager = users.find((m) => m.id === u.manager_id);
+                return (
+                  <div key={u.id} className="rounded-xl border border-[var(--line-soft)] bg-white/80 p-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="text-sm font-semibold text-[var(--ink-strong)]">{u.first_name} {u.last_name}</p>
+                        <p className="text-xs text-[var(--ink-soft)]">{u.email}</p>
+                      </div>
+                      <span className={`fancy-badge ${u.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        {u.is_active ? 'Active' : 'Inactive'}
+                      </span>
+                    </div>
+
+                    <div className="mt-2 flex flex-wrap gap-2 text-xs text-[var(--ink-soft)]">
+                      <span className={`fancy-badge ${u.role === 'admin' ? 'bg-violet-100 text-violet-800' : u.role === 'manager' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>
+                        {u.role}
+                      </span>
+                      <span className="rounded-full border border-[var(--line)] px-2 py-0.5">{u.department || 'No department'}</span>
+                    </div>
+
+                    <p className="mt-2 text-xs text-[var(--ink-soft)]">Manager: {manager ? `${manager.first_name} ${manager.last_name}` : '-'}</p>
+
+                    <div className="mt-3 flex items-center gap-2">
+                      <button
+                        onClick={() => handleEditClick(u)}
+                        className="inline-flex items-center rounded-lg bg-blue-100 px-3 py-1.5 text-xs font-semibold text-blue-800"
+                      >
+                        <Edit className="mr-1 h-3.5 w-3.5" />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteUser(u)}
+                        className="inline-flex items-center rounded-lg bg-rose-100 px-3 py-1.5 text-xs font-semibold text-rose-800"
+                      >
+                        <Trash2 className="mr-1 h-3.5 w-3.5" />
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
         </div>
       </div>
 
       {/* Create User Modal */}
       {createModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto p-4">
-          <div className="bg-white rounded-lg p-6 sm:p-8 max-w-md w-full mx-auto my-6 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Create User</h3>
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-[#10292e]/45 p-4 backdrop-blur-sm">
+          <div className="surface-panel mx-auto my-6 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl p-6 sm:p-8">
+            <h3 className="section-title mb-4 text-xl font-bold text-[var(--ink-strong)]">Create User</h3>
             <form onSubmit={handleCreateUser}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label className="mb-1 block text-sm font-semibold text-[var(--ink-soft)]">Email</label>
                   <input
                     type="email"
                     value={createFormData.email}
                     onChange={(e) => setCreateFormData({ ...createFormData, email: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="input-base"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                  <label className="mb-1 block text-sm font-semibold text-[var(--ink-soft)]">Password</label>
                   <input
                     type="password"
                     value={createFormData.password}
                     onChange={(e) => setCreateFormData({ ...createFormData, password: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="input-base"
                     minLength={8}
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                  <label className="mb-1 block text-sm font-semibold text-[var(--ink-soft)]">First Name</label>
                   <input
                     type="text"
                     value={createFormData.first_name}
                     onChange={(e) => setCreateFormData({ ...createFormData, first_name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="input-base"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                  <label className="mb-1 block text-sm font-semibold text-[var(--ink-soft)]">Last Name</label>
                   <input
                     type="text"
                     value={createFormData.last_name}
                     onChange={(e) => setCreateFormData({ ...createFormData, last_name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="input-base"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                  <label className="mb-1 block text-sm font-semibold text-[var(--ink-soft)]">Role</label>
                   <select
                     value={createFormData.role}
                     onChange={(e) => setCreateFormData({ ...createFormData, role: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="input-base"
                   >
                     <option value="employee">Employee</option>
                     <option value="manager">Manager</option>
@@ -392,11 +448,11 @@ const UserManagementPage = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                  <label className="mb-1 block text-sm font-semibold text-[var(--ink-soft)]">Department</label>
                   <select
                     value={createFormData.department}
                     onChange={(e) => setCreateFormData({ ...createFormData, department: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="input-base"
                   >
                     <option value="">Select department</option>
                     {departments.map((dept) => (
@@ -408,11 +464,11 @@ const UserManagementPage = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Assign Manager</label>
+                  <label className="mb-1 block text-sm font-semibold text-[var(--ink-soft)]">Assign Manager</label>
                   <select
                     value={createFormData.manager_id || ''}
                     onChange={(e) => setCreateFormData({ ...createFormData, manager_id: e.target.value ? parseInt(e.target.value, 10) : null })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="input-base"
                   >
                     <option value="">No Manager</option>
                     {users
@@ -427,13 +483,13 @@ const UserManagementPage = () => {
               </div>
 
               <div className="flex space-x-3 mt-6">
-                <button type="submit" className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                <button type="submit" className="brand-btn flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold">
                   Create User
                 </button>
                 <button
                   type="button"
                   onClick={() => setCreateModal(false)}
-                  className="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300"
+                  className="ghost-btn flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold"
                 >
                   Cancel
                 </button>
@@ -445,14 +501,14 @@ const UserManagementPage = () => {
 
       {/* Edit User Modal */}
       {editModal.show && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto p-4">
-          <div className="bg-white rounded-lg p-6 sm:p-8 max-w-md w-full mx-auto my-6 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Edit User</h3>
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-[#10292e]/45 p-4 backdrop-blur-sm">
+          <div className="surface-panel mx-auto my-6 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl p-6 sm:p-8">
+            <h3 className="section-title mb-4 text-xl font-bold text-[var(--ink-strong)]">Edit User</h3>
             <form onSubmit={handleUpdateUser}>
               <div className="space-y-4">
                 {/* First Name */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="mb-1 block text-sm font-semibold text-[var(--ink-soft)]">
                     First Name
                   </label>
                   <input
@@ -461,13 +517,13 @@ const UserManagementPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, first_name: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="input-base"
                   />
                 </div>
 
                 {/* Last Name */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="mb-1 block text-sm font-semibold text-[var(--ink-soft)]">
                     Last Name
                   </label>
                   <input
@@ -476,13 +532,13 @@ const UserManagementPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, last_name: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="input-base"
                   />
                 </div>
 
                 {/* Department */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="mb-1 block text-sm font-semibold text-[var(--ink-soft)]">
                     Department
                   </label>
                   <select
@@ -490,7 +546,7 @@ const UserManagementPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, department: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="input-base"
                   >
                     <option value="">Select department</option>
                     {departments.map((dept) => (
@@ -503,7 +559,7 @@ const UserManagementPage = () => {
 
                 {/* Manager */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="mb-1 block text-sm font-semibold text-[var(--ink-soft)]">
                     Assign Manager
                   </label>
                   <select
@@ -514,7 +570,7 @@ const UserManagementPage = () => {
                         manager_id: e.target.value ? parseInt(e.target.value) : null,
                       })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="input-base"
                   >
                     <option value="">No Manager</option>
                     {getAvailableManagers().map((manager) => (
@@ -526,7 +582,7 @@ const UserManagementPage = () => {
                 </div>
 
                 {/* Current User Info */}
-                <div className="bg-gray-50 p-3 rounded-md text-sm text-gray-600">
+                <div className="rounded-xl border border-[var(--line-soft)] bg-white/75 p-3 text-sm text-[var(--ink-soft)]">
                   <p>
                     <strong>Email:</strong> {editModal.user?.email}
                   </p>
@@ -539,7 +595,7 @@ const UserManagementPage = () => {
               <div className="flex space-x-3 mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                  className="brand-btn flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold"
                 >
                   Update User
                 </button>
@@ -548,7 +604,7 @@ const UserManagementPage = () => {
                   onClick={() => {
                     setEditModal({ show: false, user: null });
                   }}
-                  className="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300"
+                  className="ghost-btn flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold"
                 >
                   Cancel
                 </button>
