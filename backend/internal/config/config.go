@@ -48,13 +48,13 @@ func Load() *Config {
 		// Database
 		DBHost:     getEnv("DB_HOST", "localhost"),
 		DBPort:     getEnv("DB_PORT", "5432"),
-		DBUser:     getEnv("DB_USER", "postgres"),
-		DBPassword: getEnv("DB_PASSWORD", "postgres"),
+		DBUser:     getEnv("DB_USER", ""),
+		DBPassword: getEnv("DB_PASSWORD", ""),
 		DBName:     getEnv("DB_NAME", "leave_management"),
 		DBSSLMode:  getEnv("DB_SSLMODE", "disable"),
 
 		// JWT
-		JWTSecret:        getEnv("JWT_SECRET", "your-super-secret-key-change-in-production"),
+		JWTSecret:        getEnv("JWT_SECRET", ""),
 		JWTExpiry:        getEnv("JWT_EXPIRY", "15m"),
 		JWTRefreshExpiry: getEnv("JWT_REFRESH_EXPIRY", "168h"),
 

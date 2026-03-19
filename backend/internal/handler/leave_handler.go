@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"log"
 	"leave-management-system/internal/dto"
 	"leave-management-system/internal/middleware"
 	"leave-management-system/internal/service"
@@ -154,9 +155,11 @@ func (h *LeaveHandler) GetUserBalance(w http.ResponseWriter, r *http.Request) {
 	response, err := h.leaveService.GetUserLeaveBalance(userID)
 	if err != nil {
 		if appErr, ok := err.(*apperrors.AppError); ok {
+			log.Printf("Internal error details: %v", appErr.Err)
 			utils.ErrorResponse(w, appErr.Message, nil, appErr.Code)
 			return
 		}
+		log.Printf("Internal server error in GetUserBalance: %v", err)
 		utils.ErrorResponse(w, "Internal server error", nil, http.StatusInternalServerError)
 		return
 	}

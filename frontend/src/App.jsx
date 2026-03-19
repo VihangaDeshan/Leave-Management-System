@@ -8,6 +8,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import EmployeeDashboardPage from './pages/EmployeeDashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import UserManagementPage from './pages/UserManagementPage';
 
 function App() {
   return (
@@ -30,8 +31,17 @@ function App() {
             <Route
               path="/admin"
               element={
-                <PrivateRoute adminOnly>
+                <PrivateRoute managerAccess>
                   <AdminDashboardPage />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="/admin/users"
+              element={
+                <PrivateRoute adminOnly>
+                  <UserManagementPage />
                 </PrivateRoute>
               }
             />

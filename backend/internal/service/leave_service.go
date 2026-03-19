@@ -71,6 +71,10 @@ func (s *LeaveService) CreateLeaveRequest(userID int, req *dto.CreateLeaveReques
 
 	// Check leave balance
 	currentYear := utils.GetCurrentYear()
+	if err := s.ensureUserHasCurrentYearBalances(userID, currentYear); err != nil {
+		return nil, err
+	}
+
 	balance, err := s.balanceRepo.FindByUserAndType(userID, req.LeaveTypeID, currentYear)
 	if err != nil {
 		return nil, apperrors.BadRequest("Leave balance not found for this leave type")
@@ -177,7 +181,7 @@ func (s *LeaveService) CancelLeaveRequest(id, userID int, isAdmin bool) error {
 }
 
 // GetAllLeaveRequests retrieves all leave requests (admin only)
-func (s *LeaveService) GetAllLeaveRequests(status string, page, pageSize int) (*dto.LeaveRequestsListResponse, error) {
+func (s *LeaveService) GetAllLeaveRequests(requesterID int, requesterRole, status string, page, pageSize int) (*dto.LeaveRequestsListResponse, error) {
 	if page < 1 {
 		page = 1
 	}
@@ -186,7 +190,17 @@ func (s *LeaveService) GetAllLeaveRequests(status string, page, pageSize int) (*
 	}
 
 	offset := (page - 1) * pageSize
-	leaves, totalCount, err := s.leaveRepo.FindAll(status, pageSize, offset)
+	var (
+		leaves     []*models.LeaveRequest
+		totalCount int
+		err        error
+	)
+
+	if requesterRole == "admin" {
+		leaves, totalCount, err = s.leaveRepo.FindAll(status, pageSize, offset)
+	} else {
+		leaves, totalCount, err = s.leaveRepo.FindByManagerID(requesterID, status, pageSize, offset)
+	}
 	if err != nil {
 		return nil, apperrors.InternalServerError("Failed to retrieve leave requests", err)
 	}
@@ -214,10 +228,18 @@ func (s *LeaveService) GetAllLeaveRequests(status string, page, pageSize int) (*
 }
 
 // ApproveLeaveRequest approves a leave request
-func (s *LeaveService) ApproveLeaveRequest(id, reviewerID int, reviewNotes *string) error {
+func (s *LeaveService) ApproveLeaveRequest(id, reviewerID int, reviewerRole string, reviewNotes *string) error {
 	leave, err := s.leaveRepo.FindByID(id)
 	if err != nil {
 		return apperrors.NotFound("Leave request not found")
+	}
+
+	canManage, err := s.canManageLeaveRequest(leave.UserID, reviewerID, reviewerRole)
+	if err != nil {
+		return err
+	}
+	if !canManage {
+		return apperrors.Forbidden("You can only review leave requests for employees assigned to you")
 	}
 
 	if !leave.IsPending() {
@@ -247,10 +269,18 @@ func (s *LeaveService) ApproveLeaveRequest(id, reviewerID int, reviewNotes *stri
 }
 
 // RejectLeaveRequest rejects a leave request
-func (s *LeaveService) RejectLeaveRequest(id, reviewerID int, reviewNotes *string) error {
+func (s *LeaveService) RejectLeaveRequest(id, reviewerID int, reviewerRole string, reviewNotes *string) error {
 	leave, err := s.leaveRepo.FindByID(id)
 	if err != nil {
 		return apperrors.NotFound("Leave request not found")
+	}
+
+	canManage, err := s.canManageLeaveRequest(leave.UserID, reviewerID, reviewerRole)
+	if err != nil {
+		return err
+	}
+	if !canManage {
+		return apperrors.Forbidden("You can only review leave requests for employees assigned to you")
 	}
 
 	if !leave.IsPending() {
@@ -262,6 +292,27 @@ func (s *LeaveService) RejectLeaveRequest(id, reviewerID int, reviewNotes *strin
 	}
 
 	return nil
+}
+
+func (s *LeaveService) canManageLeaveRequest(employeeID, reviewerID int, reviewerRole string) (bool, error) {
+	if reviewerRole == "admin" {
+		return true, nil
+	}
+
+	if reviewerRole != "manager" {
+		return false, nil
+	}
+
+	employee, err := s.userRepo.FindByID(employeeID)
+	if err != nil {
+		return false, apperrors.NotFound("Employee not found")
+	}
+
+	if employee.ManagerID == nil {
+		return false, nil
+	}
+
+	return *employee.ManagerID == reviewerID, nil
 }
 
 // GetLeaveTypes retrieves all active leave types
@@ -287,6 +338,10 @@ func (s *LeaveService) GetLeaveTypes() ([]dto.LeaveTypeResponse, error) {
 // GetUserLeaveBalance retrieves leave balances for a user
 func (s *LeaveService) GetUserLeaveBalance(userID int) ([]dto.LeaveBalanceResponse, error) {
 	currentYear := utils.GetCurrentYear()
+	if err := s.ensureUserHasCurrentYearBalances(userID, currentYear); err != nil {
+		return nil, err
+	}
+
 	balances, err := s.balanceRepo.FindByUserID(userID, currentYear)
 	if err != nil {
 		return nil, apperrors.InternalServerError("Failed to retrieve leave balances", err)
@@ -318,6 +373,37 @@ func (s *LeaveService) GetUserLeaveBalance(userID int) ([]dto.LeaveBalanceRespon
 	}
 
 	return response, nil
+}
+
+func (s *LeaveService) ensureUserHasCurrentYearBalances(userID, year int) error {
+	leaveTypes, err := s.leaveTypeRepo.FindAll()
+	if err != nil {
+		return apperrors.InternalServerError("Failed to retrieve leave types", err)
+	}
+
+	for _, leaveType := range leaveTypes {
+		exists, err := s.balanceRepo.BalanceExists(userID, leaveType.ID, year)
+		if err != nil {
+			return apperrors.InternalServerError("Failed to check leave balance", err)
+		}
+		if exists {
+			continue
+		}
+
+		balance := &models.LeaveBalance{
+			UserID:      userID,
+			LeaveTypeID: leaveType.ID,
+			TotalDays:   defaultLeaveDaysByTypeName(leaveType.Name),
+			UsedDays:    0,
+			Year:        year,
+		}
+
+		if err := s.balanceRepo.Create(balance); err != nil {
+			return apperrors.InternalServerError("Failed to initialize leave balances", err)
+		}
+	}
+
+	return nil
 }
 
 // enrichLeaveRequest adds user and leave type information to a leave request
