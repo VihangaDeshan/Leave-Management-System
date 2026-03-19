@@ -20,6 +20,11 @@ export const authApi = {
     const response = await api.post('/auth/refresh', { refresh_token: refreshToken });
     return response.data;
   },
+
+  getDepartments: async () => {
+    const response = await api.get('/departments');
+    return response.data;
+  },
 };
 
 export const leaveApi = {

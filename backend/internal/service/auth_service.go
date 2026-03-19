@@ -173,3 +173,12 @@ func (s *AuthService) GetCurrentUser(userID int) (*dto.UserInfo, error) {
 		IsActive:   user.IsActive,
 	}, nil
 }
+
+// GetDepartments retrieves a list of all distinct departments
+func (s *AuthService) GetDepartments() ([]string, error) {
+	departments, err := s.userRepo.GetDistinctDepartments()
+	if err != nil {
+		return nil, apperrors.InternalServerError("Failed to retrieve departments", err)
+	}
+	return departments, nil
+}

@@ -197,3 +197,23 @@ func (r *UserRepository) GetActiveEmployeeCount() (int, error) {
 	err := r.db.QueryRow(query).Scan(&count)
 	return count, err
 }
+
+// GetDistinctDepartments returns a list of unique departments
+func (r *UserRepository) GetDistinctDepartments() ([]string, error) {
+	query := `SELECT DISTINCT department FROM users WHERE department IS NOT NULL AND department != '' ORDER BY department`
+	rows, err := r.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var departments []string
+	for rows.Next() {
+		var dept string
+		if err := rows.Scan(&dept); err != nil {
+			return nil, err
+		}
+		departments = append(departments, dept)
+	}
+	return departments, nil
+}

@@ -136,3 +136,17 @@ func (h *AuthHandler) GetMe(w http.ResponseWriter, r *http.Request) {
 
 	utils.SuccessResponse(w, "User retrieved successfully", user, http.StatusOK)
 }
+
+// GetDepartments handles fetching distinct departments
+func (h *AuthHandler) GetDepartments(w http.ResponseWriter, r *http.Request) {
+	departments, err := h.authService.GetDepartments()
+	if err != nil {
+		if appErr, ok := err.(*apperrors.AppError); ok {
+			utils.ErrorResponse(w, appErr.Message, nil, appErr.Code)
+			return
+		}
+		utils.ErrorResponse(w, "Internal server error", nil, http.StatusInternalServerError)
+		return
+	}
+	utils.SuccessResponse(w, "Departments retrieved successfully", departments, http.StatusOK)
+}
