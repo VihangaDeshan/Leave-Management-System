@@ -60,6 +60,9 @@ Before you begin, ensure you have the following installed:
 4. **Git** (optional, for cloning)
    - Download: [https://git-scm.com/downloads](https://git-scm.com/downloads)
 
+5. **Docker & Docker Compose** (optional, for running PostgreSQL quickly)
+   - Download: [https://www.docker.com/products/docker-desktop/](https://www.docker.com/products/docker-desktop/)
+
 ---
 
 ## 🚀 Installation & Setup Guide
@@ -76,6 +79,10 @@ cd Leave-Management-System
 ```
 
 ### Step 2: Database Setup
+
+You can set up the database using either **local PostgreSQL** or **Docker Compose**.
+
+#### Option A: Local PostgreSQL
 
 1. **Create PostgreSQL Database:**
 
@@ -105,6 +112,24 @@ psql -U postgres -d leave_management -f 005_create_audit_logs.sql
 psql -U postgres -d leave_management -f 006_seed_data.sql
 ```
 
+#### Option B: Docker Compose (PostgreSQL)
+
+```bash
+# Navigate to backend directory
+cd backend
+
+# Copy environment file (choose command for your OS)
+# Windows PowerShell
+Copy-Item .env.example .env
+# macOS/Linux
+cp .env.example .env
+
+# Start PostgreSQL container
+docker compose up -d
+```
+
+After the container is running, execute the same migration files listed in Option A.
+
 **Note:** The seed data file creates test accounts with the following credentials:
 - **Admin**: admin@abccompany.com / admin123
 - **Manager**: manager@abccompany.com / manager123
@@ -122,7 +147,10 @@ cd backend
 2. **Create environment file:**
 
 ```bash
-# Copy the example file
+# Copy the example file (choose command for your OS)
+# Windows PowerShell
+Copy-Item .env.example .env
+# macOS/Linux
 cp .env.example .env
 
 # Edit .env with your settings (use your preferred text editor)
@@ -164,7 +192,10 @@ cd Leave-Management-System/frontend
 2. **Create environment file:**
 
 ```bash
-# Copy the example file
+# Copy the example file (choose command for your OS)
+# Windows PowerShell
+Copy-Item .env.example .env
+# macOS/Linux
 cp .env.example .env
 
 # The default settings should work if backend is on localhost:8080
@@ -289,6 +320,11 @@ Leave-Management-System/
 PORT=8080
 ENV=development
 
+# Optional for Docker Compose database service
+POSTGRES_USER=my_secure_user
+POSTGRES_PASSWORD=my_secure_password
+POSTGRES_DB=leave_management
+
 # Database
 DB_HOST=localhost
 DB_PORT=5432
@@ -354,11 +390,14 @@ VITE_API_BASE_URL=http://localhost:8080/api/v1
 ### Authentication
 - `POST /api/v1/auth/register` - User registration
 - `POST /api/v1/auth/login` - User login
+- `POST /api/v1/auth/refresh` - Refresh access token
 - `GET /api/v1/auth/me` - Get current user
+- `GET /api/v1/departments` - Get available departments
 
 ### Employee Endpoints
 - `POST /api/v1/leaves` - Submit leave request
 - `GET /api/v1/leaves` - Get own leave history
+- `GET /api/v1/leaves/:id` - Get leave request details
 - `DELETE /api/v1/leaves/:id` - Cancel leave request
 - `GET /api/v1/leave-types` - Get available leave types
 - `GET /api/v1/profile/balance` - Get leave balance
@@ -368,8 +407,16 @@ VITE_API_BASE_URL=http://localhost:8080/api/v1
 - `PUT /api/v1/admin/leaves/:id/approve` - Approve leave
 - `PUT /api/v1/admin/leaves/:id/reject` - Reject leave
 - `GET /api/v1/admin/dashboard` - Get dashboard statistics
+- `POST /api/v1/admin/balances` - Allocate or update leave balance
+
+### Admin Only Endpoints
 - `GET /api/v1/admin/users` - Get all users
 - `POST /api/v1/admin/users` - Create new user
+- `PUT /api/v1/admin/users/:id` - Update user
+- `DELETE /api/v1/admin/users/:id` - Delete user
+
+### System Endpoints
+- `GET /health` - Health check endpoint
 
 ---
 
@@ -384,7 +431,8 @@ VITE_API_BASE_URL=http://localhost:8080/api/v1
 
 **Port already in use:**
 - Change `PORT` in backend `.env` file
-- Kill existing process: `lsof -ti:8080 | xargs kill` (Mac/Linux)
+- Kill existing process (Windows PowerShell): `Get-NetTCPConnection -LocalPort 8080 | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }`
+- Kill existing process (Mac/Linux): `lsof -ti:8080 | xargs kill`
 
 ### Frontend Issues
 
