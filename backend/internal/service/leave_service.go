@@ -191,9 +191,9 @@ func (s *LeaveService) GetAllLeaveRequests(requesterID int, requesterRole, statu
 
 	offset := (page - 1) * pageSize
 	var (
-		leaves      []*models.LeaveRequest
-		totalCount  int
-		err         error
+		leaves     []*models.LeaveRequest
+		totalCount int
+		err        error
 	)
 
 	if requesterRole == "admin" {
