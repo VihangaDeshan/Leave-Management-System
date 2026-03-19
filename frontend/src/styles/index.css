@@ -1,6 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --bg-main: #f3f7f7;
+  --bg-muted: #e6efef;
+  --ink-strong: #10292e;
+  --ink-soft: #446067;
+  --brand: #007a73;
+  --brand-strong: #00655f;
+  --accent: #f59f0a;
+  --surface: rgba(255, 255, 255, 0.8);
+  --surface-strong: rgba(255, 255, 255, 0.96);
+  --line: rgba(16, 41, 46, 0.14);
+  --line-soft: rgba(16, 41, 46, 0.08);
+}
 
 * {
   margin: 0;
@@ -9,13 +25,157 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Manrope', sans-serif;
+  color: var(--ink-strong);
+  background:
+    radial-gradient(circle at 85% 12%, rgba(245, 159, 10, 0.2), transparent 38%),
+    radial-gradient(circle at 12% 14%, rgba(0, 122, 115, 0.22), transparent 34%),
+    linear-gradient(150deg, var(--bg-main) 0%, #f7fbfb 45%, var(--bg-muted) 100%);
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
   min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+  position: relative;
+}
+
+.app-shell::before,
+.app-shell::after {
+  content: '';
+  position: fixed;
+  border-radius: 9999px;
+  filter: blur(58px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app-shell::before {
+  width: 18rem;
+  height: 18rem;
+  top: 8%;
+  left: -4rem;
+  background: rgba(0, 122, 115, 0.18);
+}
+
+.app-shell::after {
+  width: 16rem;
+  height: 16rem;
+  bottom: 10%;
+  right: -3rem;
+  background: rgba(245, 159, 10, 0.18);
+}
+
+.content-layer {
+  position: relative;
+  z-index: 1;
+}
+
+.glass-panel {
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--line-soft);
+  box-shadow: 0 20px 48px -30px rgba(16, 41, 46, 0.5);
+}
+
+.surface-panel {
+  background: var(--surface-strong);
+  border: 1px solid var(--line-soft);
+  box-shadow: 0 16px 36px -26px rgba(16, 41, 46, 0.45);
+}
+
+.section-title {
+  font-family: 'Sora', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.brand-btn {
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-strong) 100%);
+  color: #ffffff;
+  box-shadow: 0 14px 24px -16px rgba(0, 101, 95, 0.7);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.brand-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 28px -16px rgba(0, 101, 95, 0.7);
+}
+
+.brand-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ghost-btn {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+.ghost-btn:hover {
+  border-color: rgba(0, 122, 115, 0.35);
+  color: var(--ink-strong);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.input-base {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.92);
+  padding: 0.72rem 0.9rem;
+  color: var(--ink-strong);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-base:focus {
+  border-color: rgba(0, 122, 115, 0.55);
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(0, 122, 115, 0.12);
+}
+
+.fancy-badge {
+  border-radius: 9999px;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.soft-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(16, 41, 46, 0.25) transparent;
+}
+
+.soft-scrollbar::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+.soft-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(16, 41, 46, 0.25);
+  border-radius: 9999px;
+}
+
+.fade-in-up {
+  animation: fade-in-up 0.45s ease-out both;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

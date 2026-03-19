@@ -14,7 +14,8 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <div className="min-h-screen bg-gray-50">
+        <div className="app-shell">
+          <div className="content-layer">
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
@@ -48,6 +49,7 @@ function App() {
 
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Routes>
+          </div>
         </div>
         <ToastContainer position="top-right" autoClose={3000} />
       </AuthProvider>

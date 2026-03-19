@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authApi } from '../api';
 import { toast } from 'react-toastify';
+import { BadgeCheck, Briefcase, UserPlus } from 'lucide-react';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -51,120 +52,152 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-lg">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Join ABC Company's Leave Management System
-          </p>
-        </div>
+    <div className="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto grid min-h-[calc(100vh-3rem)] w-full max-w-6xl grid-cols-1 overflow-hidden rounded-3xl border border-white/40 shadow-[0_28px_70px_-42px_rgba(16,41,46,0.55)] lg:grid-cols-[1.08fr_1fr]">
+        <section className="glass-panel relative hidden overflow-hidden p-10 lg:block">
+          <div className="absolute right-0 top-0 h-52 w-52 rounded-full bg-white/35 blur-3xl" />
+          <div className="absolute -left-4 bottom-10 h-40 w-40 rounded-full bg-teal-200/40 blur-3xl" />
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">
-                  First Name
+          <div className="relative z-10 flex h-full flex-col justify-between">
+            <div className="fade-in-up">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ink-soft)]">
+                <UserPlus className="h-3.5 w-3.5 text-[var(--brand)]" />
+                Quick Onboarding
+              </div>
+              <h1 className="section-title mt-5 max-w-md text-4xl font-extrabold leading-tight text-[var(--ink-strong)] xl:text-5xl">
+                Create your workspace account in minutes.
+              </h1>
+              <p className="mt-4 max-w-md text-sm leading-6 text-[var(--ink-soft)] xl:text-base">
+                Set your role, link your department, and start managing leave requests with full transparency.
+              </p>
+            </div>
+
+            <div className="space-y-3 text-sm">
+              <div className="surface-panel flex items-center gap-3 rounded-2xl p-4">
+                <BadgeCheck className="h-5 w-5 text-[var(--brand)]" />
+                <span className="font-medium text-[var(--ink-soft)]">Secure account setup and role-based access</span>
+              </div>
+              <div className="surface-panel flex items-center gap-3 rounded-2xl p-4">
+                <Briefcase className="h-5 w-5 text-[var(--brand)]" />
+                <span className="font-medium text-[var(--ink-soft)]">Department-aligned user profiles</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="surface-panel soft-scrollbar max-h-[calc(100vh-3rem)] overflow-y-auto p-6 sm:p-10 lg:p-12">
+          <div className="mx-auto w-full max-w-md fade-in-up">
+            <div className="mb-6 space-y-2 text-center lg:text-left">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ink-soft)]">Get Started</p>
+              <h2 className="section-title text-3xl font-extrabold text-[var(--ink-strong)]">Create your account</h2>
+              <p className="text-sm text-[var(--ink-soft)]">Join ABC Company&apos;s leave management platform.</p>
+            </div>
+
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <label htmlFor="first_name" className="text-sm font-semibold text-[var(--ink-soft)]">
+                    First Name
+                  </label>
+                  <input
+                    id="first_name"
+                    name="first_name"
+                    type="text"
+                    required
+                    value={formData.first_name}
+                    onChange={handleChange}
+                    className="input-base"
+                    placeholder="First name"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="last_name" className="text-sm font-semibold text-[var(--ink-soft)]">
+                    Last Name
+                  </label>
+                  <input
+                    id="last_name"
+                    name="last_name"
+                    type="text"
+                    required
+                    value={formData.last_name}
+                    onChange={handleChange}
+                    className="input-base"
+                    placeholder="Last name"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-semibold text-[var(--ink-soft)]">
+                  Work Email
                 </label>
                 <input
-                  id="first_name"
-                  name="first_name"
-                  type="text"
+                  id="email"
+                  name="email"
+                  type="email"
                   required
-                  value={formData.first_name}
+                  value={formData.email}
                   onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="input-base"
+                  placeholder="name@company.com"
                 />
               </div>
 
-              <div>
-                <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">
-                  Last Name
+              <div className="space-y-2">
+                <label htmlFor="password" className="text-sm font-semibold text-[var(--ink-soft)]">
+                  Password
                 </label>
                 <input
-                  id="last_name"
-                  name="last_name"
-                  type="text"
+                  id="password"
+                  name="password"
+                  type="password"
                   required
-                  value={formData.last_name}
+                  minLength={8}
+                  value={formData.password}
                   onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="input-base"
+                  placeholder="Minimum 8 characters"
                 />
               </div>
-            </div>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              />
-            </div>
+              <div className="space-y-2">
+                <label htmlFor="department" className="text-sm font-semibold text-[var(--ink-soft)]">
+                  Department (Optional)
+                </label>
+                <select
+                  id="department"
+                  name="department"
+                  value={formData.department}
+                  onChange={handleChange}
+                  className="input-base"
+                >
+                  <option value="">Select a department...</option>
+                  {departments.map((dept, idx) => (
+                    <option key={idx} value={dept}>
+                      {dept}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                minLength={8}
-                value={formData.password}
-                onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="department" className="block text-sm font-medium text-gray-700">
-                Department (Optional)
-              </label>
-              <select
-                id="department"
-                name="department"
-                value={formData.department}
-                onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
+              <button
+                type="submit"
+                disabled={loading}
+                className="brand-btn w-full rounded-xl px-4 py-3 text-sm font-semibold"
               >
-                <option value="">Select a department...</option>
-                {departments.map((dept, idx) => (
-                  <option key={idx} value={dept}>
-                    {dept}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+                {loading ? 'Creating account...' : 'Create account'}
+              </button>
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400"
-            >
-              {loading ? 'Creating account...' : 'Register'}
-            </button>
+              <div className="text-center text-sm text-[var(--ink-soft)]">
+                Already have an account?{' '}
+                <Link to="/login" className="font-bold text-[var(--brand)] transition hover:text-[var(--brand-strong)]">
+                  Sign in here
+                </Link>
+              </div>
+            </form>
           </div>
-
-          <div className="text-center text-sm">
-            <span className="text-gray-600">Already have an account? </span>
-            <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500">
-              Sign in here
-            </Link>
-          </div>
-        </form>
+        </section>
       </div>
     </div>
   );
