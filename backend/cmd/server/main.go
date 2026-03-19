@@ -55,11 +55,11 @@ func main() {
 	// API v1 routes
 	api := router.PathPrefix("/api/v1").Subrouter()
 
-		// Public routes (no authentication required)
-		api.HandleFunc("/auth/register", authHandler.Register).Methods("POST", "OPTIONS")
-		api.HandleFunc("/auth/login", authHandler.Login).Methods("POST", "OPTIONS")
-		api.HandleFunc("/auth/refresh", authHandler.RefreshToken).Methods("POST", "OPTIONS")
-		api.HandleFunc("/departments", authHandler.GetDepartments).Methods("GET", "OPTIONS")
+	// Public routes (no authentication required)
+	api.HandleFunc("/auth/register", authHandler.Register).Methods("POST", "OPTIONS")
+	api.HandleFunc("/auth/login", authHandler.Login).Methods("POST", "OPTIONS")
+	api.HandleFunc("/auth/refresh", authHandler.RefreshToken).Methods("POST", "OPTIONS")
+	api.HandleFunc("/departments", authHandler.GetDepartments).Methods("GET", "OPTIONS")
 
 	// Protected routes (authentication required)
 	protected := api.PathPrefix("").Subrouter()
