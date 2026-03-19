@@ -7,15 +7,24 @@ import (
 	"leave-management-system/internal/repository"
 	"leave-management-system/internal/utils"
 	apperrors "leave-management-system/pkg/errors"
+	"strings"
 )
 
 type AuthService struct {
-	userRepo *repository.UserRepository
+	userRepo      *repository.UserRepository
+	balanceRepo   *repository.BalanceRepository
+	leaveTypeRepo *repository.LeaveTypeRepository
 }
 
-func NewAuthService(userRepo *repository.UserRepository) *AuthService {
+func NewAuthService(
+	userRepo *repository.UserRepository,
+	balanceRepo *repository.BalanceRepository,
+	leaveTypeRepo *repository.LeaveTypeRepository,
+) *AuthService {
 	return &AuthService{
-		userRepo: userRepo,
+		userRepo:      userRepo,
+		balanceRepo:   balanceRepo,
+		leaveTypeRepo: leaveTypeRepo,
 	}
 }
 
@@ -49,6 +58,10 @@ func (s *AuthService) Register(req *dto.RegisterRequest) (*dto.LoginResponse, er
 
 	if err := s.userRepo.Create(user); err != nil {
 		return nil, apperrors.InternalServerError("Failed to create user", err)
+	}
+
+	if err := s.initializeLeaveBalances(user.ID); err != nil {
+		return nil, err
 	}
 
 	// Generate tokens
@@ -181,4 +194,50 @@ func (s *AuthService) GetDepartments() ([]string, error) {
 		return nil, apperrors.InternalServerError("Failed to retrieve departments", err)
 	}
 	return departments, nil
+}
+
+// initializeLeaveBalances creates current-year leave balances for all active leave types.
+func (s *AuthService) initializeLeaveBalances(userID int) error {
+	currentYear := utils.GetCurrentYear()
+	leaveTypes, err := s.leaveTypeRepo.FindAll()
+	if err != nil {
+		return apperrors.InternalServerError("Failed to retrieve leave types", err)
+	}
+
+	for _, leaveType := range leaveTypes {
+		exists, err := s.balanceRepo.BalanceExists(userID, leaveType.ID, currentYear)
+		if err != nil {
+			return apperrors.InternalServerError("Failed to check leave balance", err)
+		}
+		if exists {
+			continue
+		}
+
+		balance := &models.LeaveBalance{
+			UserID:      userID,
+			LeaveTypeID: leaveType.ID,
+			TotalDays:   defaultLeaveDaysByTypeName(leaveType.Name),
+			UsedDays:    0,
+			Year:        currentYear,
+		}
+
+		if err := s.balanceRepo.Create(balance); err != nil {
+			return apperrors.InternalServerError("Failed to initialize leave balances", err)
+		}
+	}
+
+	return nil
+}
+
+func defaultLeaveDaysByTypeName(leaveTypeName string) float64 {
+	switch strings.ToLower(strings.TrimSpace(leaveTypeName)) {
+	case "annual leave":
+		return 20
+	case "sick leave":
+		return 10
+	case "casual leave":
+		return 5
+	default:
+		return 0
+	}
 }

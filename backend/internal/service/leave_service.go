@@ -71,6 +71,10 @@ func (s *LeaveService) CreateLeaveRequest(userID int, req *dto.CreateLeaveReques
 
 	// Check leave balance
 	currentYear := utils.GetCurrentYear()
+	if err := s.ensureUserHasCurrentYearBalances(userID, currentYear); err != nil {
+		return nil, err
+	}
+
 	balance, err := s.balanceRepo.FindByUserAndType(userID, req.LeaveTypeID, currentYear)
 	if err != nil {
 		return nil, apperrors.BadRequest("Leave balance not found for this leave type")
@@ -287,6 +291,10 @@ func (s *LeaveService) GetLeaveTypes() ([]dto.LeaveTypeResponse, error) {
 // GetUserLeaveBalance retrieves leave balances for a user
 func (s *LeaveService) GetUserLeaveBalance(userID int) ([]dto.LeaveBalanceResponse, error) {
 	currentYear := utils.GetCurrentYear()
+	if err := s.ensureUserHasCurrentYearBalances(userID, currentYear); err != nil {
+		return nil, err
+	}
+
 	balances, err := s.balanceRepo.FindByUserID(userID, currentYear)
 	if err != nil {
 		return nil, apperrors.InternalServerError("Failed to retrieve leave balances", err)
@@ -318,6 +326,37 @@ func (s *LeaveService) GetUserLeaveBalance(userID int) ([]dto.LeaveBalanceRespon
 	}
 
 	return response, nil
+}
+
+func (s *LeaveService) ensureUserHasCurrentYearBalances(userID, year int) error {
+	leaveTypes, err := s.leaveTypeRepo.FindAll()
+	if err != nil {
+		return apperrors.InternalServerError("Failed to retrieve leave types", err)
+	}
+
+	for _, leaveType := range leaveTypes {
+		exists, err := s.balanceRepo.BalanceExists(userID, leaveType.ID, year)
+		if err != nil {
+			return apperrors.InternalServerError("Failed to check leave balance", err)
+		}
+		if exists {
+			continue
+		}
+
+		balance := &models.LeaveBalance{
+			UserID:      userID,
+			LeaveTypeID: leaveType.ID,
+			TotalDays:   defaultLeaveDaysByTypeName(leaveType.Name),
+			UsedDays:    0,
+			Year:        year,
+		}
+
+		if err := s.balanceRepo.Create(balance); err != nil {
+			return apperrors.InternalServerError("Failed to initialize leave balances", err)
+		}
+	}
+
+	return nil
 }
 
 // enrichLeaveRequest adds user and leave type information to a leave request

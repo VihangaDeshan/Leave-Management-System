@@ -34,8 +34,8 @@ func main() {
 	leaveTypeRepo := repository.NewLeaveTypeRepository(db)
 
 	// Initialize services
-	authService := service.NewAuthService(userRepo)
-	userService := service.NewUserService(userRepo)
+	authService := service.NewAuthService(userRepo, balanceRepo, leaveTypeRepo)
+	userService := service.NewUserService(userRepo, balanceRepo, leaveTypeRepo)
 	leaveService := service.NewLeaveService(leaveRepo, balanceRepo, leaveTypeRepo, userRepo)
 	balanceService := service.NewBalanceService(balanceRepo, leaveTypeRepo, userRepo)
 	dashboardService := service.NewDashboardService(leaveRepo, userRepo, leaveTypeRepo, db)

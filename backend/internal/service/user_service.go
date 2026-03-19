@@ -10,12 +10,20 @@ import (
 )
 
 type UserService struct {
-	userRepo *repository.UserRepository
+	userRepo      *repository.UserRepository
+	balanceRepo   *repository.BalanceRepository
+	leaveTypeRepo *repository.LeaveTypeRepository
 }
 
-func NewUserService(userRepo *repository.UserRepository) *UserService {
+func NewUserService(
+	userRepo *repository.UserRepository,
+	balanceRepo *repository.BalanceRepository,
+	leaveTypeRepo *repository.LeaveTypeRepository,
+) *UserService {
 	return &UserService{
-		userRepo: userRepo,
+		userRepo:      userRepo,
+		balanceRepo:   balanceRepo,
+		leaveTypeRepo: leaveTypeRepo,
 	}
 }
 
@@ -149,6 +157,10 @@ func (s *UserService) CreateUser(req *dto.CreateUserRequest) (*dto.UserResponse,
 		return nil, apperrors.InternalServerError("Failed to create user", err)
 	}
 
+	if err := s.initializeLeaveBalances(user.ID); err != nil {
+		return nil, err
+	}
+
 	return s.mapToUserResponse(user), nil
 }
 
@@ -212,4 +224,37 @@ func (s *UserService) mapToUserResponse(user *models.User) *dto.UserResponse {
 		IsActive:   user.IsActive,
 		CreatedAt:  user.CreatedAt.Format("2006-01-02 15:04:05"),
 	}
+}
+
+// initializeLeaveBalances creates current-year leave balances for all active leave types.
+func (s *UserService) initializeLeaveBalances(userID int) error {
+	currentYear := utils.GetCurrentYear()
+	leaveTypes, err := s.leaveTypeRepo.FindAll()
+	if err != nil {
+		return apperrors.InternalServerError("Failed to retrieve leave types", err)
+	}
+
+	for _, leaveType := range leaveTypes {
+		exists, err := s.balanceRepo.BalanceExists(userID, leaveType.ID, currentYear)
+		if err != nil {
+			return apperrors.InternalServerError("Failed to check leave balance", err)
+		}
+		if exists {
+			continue
+		}
+
+		balance := &models.LeaveBalance{
+			UserID:      userID,
+			LeaveTypeID: leaveType.ID,
+			TotalDays:   defaultLeaveDaysByTypeName(leaveType.Name),
+			UsedDays:    0,
+			Year:        currentYear,
+		}
+
+		if err := s.balanceRepo.Create(balance); err != nil {
+			return apperrors.InternalServerError("Failed to initialize leave balances", err)
+		}
+	}
+
+	return nil
 }
