@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { authApi } from '../api';
 import { toast } from 'react-toastify';
 
 const RegisterPage = () => {
@@ -11,9 +12,24 @@ const RegisterPage = () => {
     last_name: '',
     department: '',
   });
+  const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const response = await authApi.getDepartments();
+        if (response.data) {
+          setDepartments(Array.isArray(response.data) ? response.data : []);
+        }
+      } catch (err) {
+        console.error('Failed to fetch departments:', err);
+      }
+    };
+    fetchDepartments();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -115,14 +131,20 @@ const RegisterPage = () => {
               <label htmlFor="department" className="block text-sm font-medium text-gray-700">
                 Department (Optional)
               </label>
-              <input
+              <select
                 id="department"
                 name="department"
-                type="text"
                 value={formData.department}
                 onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              />
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
+              >
+                <option value="">Select a department...</option>
+                {departments.map((dept, idx) => (
+                  <option key={idx} value={dept}>
+                    {dept}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
