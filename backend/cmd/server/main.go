@@ -83,11 +83,16 @@ func main() {
 	admin.HandleFunc("/leaves", adminHandler.GetAllLeaves).Methods("GET", "OPTIONS")
 	admin.HandleFunc("/leaves/{id}/approve", adminHandler.ApproveLeave).Methods("PUT", "OPTIONS")
 	admin.HandleFunc("/leaves/{id}/reject", adminHandler.RejectLeave).Methods("PUT", "OPTIONS")
-	admin.HandleFunc("/users", adminHandler.GetAllUsers).Methods("GET", "OPTIONS")
-	admin.HandleFunc("/users", adminHandler.CreateUser).Methods("POST", "OPTIONS")
-	admin.HandleFunc("/users/{id}", adminHandler.UpdateUser).Methods("PUT", "OPTIONS")
 	admin.HandleFunc("/dashboard", adminHandler.GetDashboardStats).Methods("GET", "OPTIONS")
 	admin.HandleFunc("/balances", adminHandler.AllocateBalance).Methods("POST", "OPTIONS")
+
+	// Admin-only routes
+	adminOnly := protected.PathPrefix("/admin").Subrouter()
+	adminOnly.Use(middleware.RequireAdmin)
+	adminOnly.HandleFunc("/users", adminHandler.GetAllUsers).Methods("GET", "OPTIONS")
+	adminOnly.HandleFunc("/users", adminHandler.CreateUser).Methods("POST", "OPTIONS")
+	adminOnly.HandleFunc("/users/{id}", adminHandler.UpdateUser).Methods("PUT", "OPTIONS")
+	adminOnly.HandleFunc("/users/{id}", adminHandler.DeleteUser).Methods("DELETE", "OPTIONS")
 
 	// Health check endpoint
 	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {

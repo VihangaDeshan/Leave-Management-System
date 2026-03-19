@@ -181,7 +181,7 @@ func (s *LeaveService) CancelLeaveRequest(id, userID int, isAdmin bool) error {
 }
 
 // GetAllLeaveRequests retrieves all leave requests (admin only)
-func (s *LeaveService) GetAllLeaveRequests(status string, page, pageSize int) (*dto.LeaveRequestsListResponse, error) {
+func (s *LeaveService) GetAllLeaveRequests(requesterID int, requesterRole, status string, page, pageSize int) (*dto.LeaveRequestsListResponse, error) {
 	if page < 1 {
 		page = 1
 	}
@@ -190,7 +190,17 @@ func (s *LeaveService) GetAllLeaveRequests(status string, page, pageSize int) (*
 	}
 
 	offset := (page - 1) * pageSize
-	leaves, totalCount, err := s.leaveRepo.FindAll(status, pageSize, offset)
+	var (
+		leaves      []*models.LeaveRequest
+		totalCount  int
+		err         error
+	)
+
+	if requesterRole == "admin" {
+		leaves, totalCount, err = s.leaveRepo.FindAll(status, pageSize, offset)
+	} else {
+		leaves, totalCount, err = s.leaveRepo.FindByManagerID(requesterID, status, pageSize, offset)
+	}
 	if err != nil {
 		return nil, apperrors.InternalServerError("Failed to retrieve leave requests", err)
 	}
@@ -218,10 +228,18 @@ func (s *LeaveService) GetAllLeaveRequests(status string, page, pageSize int) (*
 }
 
 // ApproveLeaveRequest approves a leave request
-func (s *LeaveService) ApproveLeaveRequest(id, reviewerID int, reviewNotes *string) error {
+func (s *LeaveService) ApproveLeaveRequest(id, reviewerID int, reviewerRole string, reviewNotes *string) error {
 	leave, err := s.leaveRepo.FindByID(id)
 	if err != nil {
 		return apperrors.NotFound("Leave request not found")
+	}
+
+	canManage, err := s.canManageLeaveRequest(leave.UserID, reviewerID, reviewerRole)
+	if err != nil {
+		return err
+	}
+	if !canManage {
+		return apperrors.Forbidden("You can only review leave requests for employees assigned to you")
 	}
 
 	if !leave.IsPending() {
@@ -251,10 +269,18 @@ func (s *LeaveService) ApproveLeaveRequest(id, reviewerID int, reviewNotes *stri
 }
 
 // RejectLeaveRequest rejects a leave request
-func (s *LeaveService) RejectLeaveRequest(id, reviewerID int, reviewNotes *string) error {
+func (s *LeaveService) RejectLeaveRequest(id, reviewerID int, reviewerRole string, reviewNotes *string) error {
 	leave, err := s.leaveRepo.FindByID(id)
 	if err != nil {
 		return apperrors.NotFound("Leave request not found")
+	}
+
+	canManage, err := s.canManageLeaveRequest(leave.UserID, reviewerID, reviewerRole)
+	if err != nil {
+		return err
+	}
+	if !canManage {
+		return apperrors.Forbidden("You can only review leave requests for employees assigned to you")
 	}
 
 	if !leave.IsPending() {
@@ -266,6 +292,27 @@ func (s *LeaveService) RejectLeaveRequest(id, reviewerID int, reviewNotes *strin
 	}
 
 	return nil
+}
+
+func (s *LeaveService) canManageLeaveRequest(employeeID, reviewerID int, reviewerRole string) (bool, error) {
+	if reviewerRole == "admin" {
+		return true, nil
+	}
+
+	if reviewerRole != "manager" {
+		return false, nil
+	}
+
+	employee, err := s.userRepo.FindByID(employeeID)
+	if err != nil {
+		return false, apperrors.NotFound("Employee not found")
+	}
+
+	if employee.ManagerID == nil {
+		return false, nil
+	}
+
+	return *employee.ManagerID == reviewerID, nil
 }
 
 // GetLeaveTypes retrieves all active leave types

@@ -39,11 +39,14 @@ func NewAdminHandler(
 
 // GetAllLeaves retrieves all leave requests
 func (h *AdminHandler) GetAllLeaves(w http.ResponseWriter, r *http.Request) {
+	requesterID, _ := middleware.GetUserIDFromContext(r.Context())
+	requesterRole, _ := middleware.GetUserRoleFromContext(r.Context())
+
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	pageSize, _ := strconv.Atoi(r.URL.Query().Get("page_size"))
 	status := r.URL.Query().Get("status")
 
-	response, err := h.leaveService.GetAllLeaveRequests(status, page, pageSize)
+	response, err := h.leaveService.GetAllLeaveRequests(requesterID, requesterRole, status, page, pageSize)
 	if err != nil {
 		if appErr, ok := err.(*apperrors.AppError); ok {
 			utils.ErrorResponse(w, appErr.Message, nil, appErr.Code)
@@ -59,6 +62,7 @@ func (h *AdminHandler) GetAllLeaves(w http.ResponseWriter, r *http.Request) {
 // ApproveLeave approves a leave request
 func (h *AdminHandler) ApproveLeave(w http.ResponseWriter, r *http.Request) {
 	reviewerID, _ := middleware.GetUserIDFromContext(r.Context())
+	reviewerRole, _ := middleware.GetUserRoleFromContext(r.Context())
 
 	vars := mux.Vars(r)
 	leaveID, err := strconv.Atoi(vars["id"])
@@ -69,9 +73,9 @@ func (h *AdminHandler) ApproveLeave(w http.ResponseWriter, r *http.Request) {
 
 	var req dto.ReviewLeaveRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err == nil && req.ReviewNotes != nil {
-		err = h.leaveService.ApproveLeaveRequest(leaveID, reviewerID, req.ReviewNotes)
+		err = h.leaveService.ApproveLeaveRequest(leaveID, reviewerID, reviewerRole, req.ReviewNotes)
 	} else {
-		err = h.leaveService.ApproveLeaveRequest(leaveID, reviewerID, nil)
+		err = h.leaveService.ApproveLeaveRequest(leaveID, reviewerID, reviewerRole, nil)
 	}
 
 	if err != nil {
@@ -89,6 +93,7 @@ func (h *AdminHandler) ApproveLeave(w http.ResponseWriter, r *http.Request) {
 // RejectLeave rejects a leave request
 func (h *AdminHandler) RejectLeave(w http.ResponseWriter, r *http.Request) {
 	reviewerID, _ := middleware.GetUserIDFromContext(r.Context())
+	reviewerRole, _ := middleware.GetUserRoleFromContext(r.Context())
 
 	vars := mux.Vars(r)
 	leaveID, err := strconv.Atoi(vars["id"])
@@ -99,9 +104,9 @@ func (h *AdminHandler) RejectLeave(w http.ResponseWriter, r *http.Request) {
 
 	var req dto.ReviewLeaveRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err == nil && req.ReviewNotes != nil {
-		err = h.leaveService.RejectLeaveRequest(leaveID, reviewerID, req.ReviewNotes)
+		err = h.leaveService.RejectLeaveRequest(leaveID, reviewerID, reviewerRole, req.ReviewNotes)
 	} else {
-		err = h.leaveService.RejectLeaveRequest(leaveID, reviewerID, nil)
+		err = h.leaveService.RejectLeaveRequest(leaveID, reviewerID, reviewerRole, nil)
 	}
 
 	if err != nil {
@@ -188,9 +193,33 @@ func (h *AdminHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	utils.SuccessResponse(w, "User updated successfully", response, http.StatusOK)
 }
 
+// DeleteUser deactivates a user (admin only)
+func (h *AdminHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userID, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		utils.ErrorResponse(w, "Invalid user ID", nil, http.StatusBadRequest)
+		return
+	}
+
+	if err := h.userService.DeactivateUser(userID); err != nil {
+		if appErr, ok := err.(*apperrors.AppError); ok {
+			utils.ErrorResponse(w, appErr.Message, nil, appErr.Code)
+			return
+		}
+		utils.ErrorResponse(w, "Internal server error", nil, http.StatusInternalServerError)
+		return
+	}
+
+	utils.SuccessResponse(w, "User deactivated successfully", nil, http.StatusOK)
+}
+
 // Get Dashboard Stats
 func (h *AdminHandler) GetDashboardStats(w http.ResponseWriter, r *http.Request) {
-	response, err := h.dashboardService.GetDashboardStats()
+	requesterID, _ := middleware.GetUserIDFromContext(r.Context())
+	requesterRole, _ := middleware.GetUserRoleFromContext(r.Context())
+
+	response, err := h.dashboardService.GetDashboardStats(requesterID, requesterRole)
 	if err != nil {
 		if appErr, ok := err.(*apperrors.AppError); ok {
 			utils.ErrorResponse(w, appErr.Message, nil, appErr.Code)

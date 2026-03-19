@@ -90,6 +90,11 @@ export const adminApi = {
     return response.data;
   },
 
+  deleteUser: async (id) => {
+    const response = await api.delete(`/admin/users/${id}`);
+    return response.data;
+  },
+
   getDashboardStats: async () => {
     const response = await api.get('/admin/dashboard');
     return response.data;

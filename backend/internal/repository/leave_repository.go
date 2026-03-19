@@ -194,6 +194,73 @@ func (r *LeaveRepository) FindAll(status string, limit, offset int) ([]*models.L
 	return leaves, totalCount, nil
 }
 
+// FindByManagerID finds leave requests for employees assigned to a manager.
+func (r *LeaveRepository) FindByManagerID(managerID int, status string, limit, offset int) ([]*models.LeaveRequest, int, error) {
+	countQuery := `
+		SELECT COUNT(*)
+		FROM leave_requests lr
+		JOIN users u ON lr.user_id = u.id
+		WHERE u.manager_id = $1
+	`
+	query := `
+		SELECT lr.id, lr.user_id, lr.leave_type_id, lr.start_date, lr.end_date, lr.total_days, lr.reason, lr.status,
+		       lr.reviewed_by, lr.reviewed_at, lr.review_notes, lr.created_at, lr.updated_at
+		FROM leave_requests lr
+		JOIN users u ON lr.user_id = u.id
+		WHERE u.manager_id = $1
+	`
+
+	args := []interface{}{managerID}
+	argIndex := 2
+
+	if status != "" {
+		countQuery += fmt.Sprintf(" AND lr.status = $%d", argIndex)
+		query += fmt.Sprintf(" AND lr.status = $%d", argIndex)
+		args = append(args, status)
+		argIndex++
+	}
+
+	var totalCount int
+	if err := r.db.QueryRow(countQuery, args...).Scan(&totalCount); err != nil {
+		return nil, 0, err
+	}
+
+	query += fmt.Sprintf(" ORDER BY lr.created_at DESC LIMIT $%d OFFSET $%d", argIndex, argIndex+1)
+	args = append(args, limit, offset)
+
+	rows, err := r.db.Query(query, args...)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	var leaves []*models.LeaveRequest
+	for rows.Next() {
+		leave := &models.LeaveRequest{}
+		err := rows.Scan(
+			&leave.ID,
+			&leave.UserID,
+			&leave.LeaveTypeID,
+			&leave.StartDate,
+			&leave.EndDate,
+			&leave.TotalDays,
+			&leave.Reason,
+			&leave.Status,
+			&leave.ReviewedBy,
+			&leave.ReviewedAt,
+			&leave.ReviewNotes,
+			&leave.CreatedAt,
+			&leave.UpdatedAt,
+		)
+		if err != nil {
+			return nil, 0, err
+		}
+		leaves = append(leaves, leave)
+	}
+
+	return leaves, totalCount, nil
+}
+
 // Update updates a leave request
 func (r *LeaveRepository) Update(leave *models.LeaveRequest) error {
 	query := `
