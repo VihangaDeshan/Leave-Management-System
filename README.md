@@ -211,6 +211,8 @@ npm install
 
 ```bash
 npm run dev
+# or
+npm start
 ```
 
 The frontend will start on **http://localhost:5173**
