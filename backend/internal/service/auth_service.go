@@ -1,7 +1,6 @@
 package service
 
 import (
-	"errors"
 	"leave-management-system/internal/dto"
 	"leave-management-system/internal/models"
 	"leave-management-system/internal/repository"
@@ -170,7 +169,7 @@ func (s *AuthService) RefreshToken(refreshToken string) (*dto.RefreshTokenRespon
 func (s *AuthService) GetCurrentUser(userID int) (*dto.UserInfo, error) {
 	user, err := s.userRepo.FindByID(userID)
 	if err != nil {
-		if errors.Is(err, errors.New("user not found")) {
+		if err.Error() == "user not found" {
 			return nil, apperrors.NotFound("User not found")
 		}
 		return nil, apperrors.InternalServerError("Failed to retrieve user", err)

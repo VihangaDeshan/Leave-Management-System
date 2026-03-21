@@ -7,6 +7,7 @@ import (
 	"leave-management-system/internal/utils"
 	apperrors "leave-management-system/pkg/errors"
 	"math"
+	"strconv"
 	"time"
 )
 
@@ -82,7 +83,7 @@ func (s *LeaveService) CreateLeaveRequest(userID int, req *dto.CreateLeaveReques
 
 	if !balance.HasSufficientBalance(totalDays) {
 		return nil, apperrors.BadRequest("Insufficient leave balance. Available: " +
-			utils.FormatDateString(time.Time{}) + " days")
+			strconv.FormatFloat(balance.AvailableDays, 'f', -1, 64) + " days")
 	}
 
 	// Create leave request
